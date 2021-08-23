@@ -1,0 +1,28 @@
+---
+- name: task1_3
+  hosts: node1.example.com
+  user: ansible
+  become: yes
+  become_method: sudo
+  become_user: root
+  tasks:
+  - name: adding net.ifnames=0
+    lineinfile:
+      state: present
+      dest: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=(?!.* net.ifnames)\"[^\"]+)(\".*)'
+      line: '\1 net.ifnames=0\2'
+
+  - name: adding biosdevname=0
+    lineinfile:
+      state: present
+      dest: /etc/default/grub
+      backrefs: yes
+      regexp: '^(GRUB_CMDLINE_LINUX=(?!.* biosdevname)\"[^\"]+)(\".*)'
+      line: '\1 biosdevname=0\2'
+
+  - name: grub2-mkconfig
+    command: "grub2-mkconfig > /boot/grub2/grub.cfg"
+...
+
